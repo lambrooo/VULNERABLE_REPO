@@ -1,0 +1,23 @@
+{
+  "name": "vulnerable-app-backend",
+  "version": "1.0.0",
+  "dependencies": {
+    "lodash": "4.17.15",
+    "axios": "0.21.0",
+    "express": "4.17.1",
+    "jsonwebtoken": "8.5.0",
+    "mongoose": "5.10.0",
+    "helmet": "3.21.0",
+    "bcrypt": "3.0.0",
+    "sequelize": "5.22.0",
+    "moment": "2.29.0",
+    "tar": "4.4.8",
+    "minimist": "1.2.5",
+    "node-fetch": "2.6.0",
+    "xml2js": "0.4.19",
+    "readline-sync": "1.4.10",
+    "mysql": "2.18.1",
+    "ghostscript4js": "3.0.0",
+    "mongodb": "3.6.0"
+  }
+}

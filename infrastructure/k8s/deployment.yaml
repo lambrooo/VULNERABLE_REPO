@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vulnerable-app
+spec:
+  template:
+    spec:
+      containers:
+      - name: app
+        image: myapp:latest
+        securityContext:
+          # BAD: Privileged container
+          privileged: true
+          # BAD: Running as root
+          runAsUser: 0
+        env:
+        - name: DB_PASSWORD
+          # BAD: Hardcoded secret in K8s manifest
+          value: "admin123"
+        resources: {}

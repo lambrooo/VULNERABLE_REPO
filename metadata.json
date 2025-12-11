@@ -1,0 +1,5 @@
+{
+  "name": "Vulnerable E-Commerce Demo",
+  "description": "A deliberately vulnerable e-commerce application designed to test security scanners. It contains intentional flaws including XSS, SQLi, Hardcoded Secrets, and IaC misconfigurations.",
+  "requestFramePermissions": []
+}

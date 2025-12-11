@@ -1,0 +1,43 @@
+openapi: 3.0.0
+info:
+  title: Vulnerable E-Commerce API
+  version: 1.0.0
+
+servers:
+  - url: http://api.example.com  # BAD: HTTP not HTTPS
+
+paths:
+  /users/{userId}:
+    get:
+      operationId: getUser
+      # Missing: security definition
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string  # BAD: Should be integer
+      responses:
+        200:
+          description: Success
+          # Missing: response schema
+        # Missing: error responses
+        
+  /admin/users:
+    delete:
+      operationId: deleteAllUsers
+      # Missing: security
+      
+  /login:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                  example: "password123"  # BAD
+
+# Missing: securityDefinitions
