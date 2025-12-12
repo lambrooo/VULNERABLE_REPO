@@ -2,19 +2,46 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: vulnerable-app
+  labels:
+    app: vulnerable
 spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: vulnerable
   template:
+    metadata:
+      labels:
+        app: vulnerable
     spec:
+      hostNetwork: true
+      hostPID: true
       containers:
       - name: app
         image: myapp:latest
         securityContext:
-          # BAD: Privileged container
           privileged: true
-          # BAD: Running as root
           runAsUser: 0
+          allowPrivilegeEscalation: true
+          readOnlyRootFilesystem: false
+          capabilities:
+            add:
+              - ALL
+        ports:
+        - containerPort: 22
+        - containerPort: 80
+        - containerPort: 443
         env:
         - name: DB_PASSWORD
-          # BAD: Hardcoded secret in K8s manifest
           value: "admin123"
-        resources: {}
+        - name: AWS_SECRET_KEY
+          value: "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+        - name: JWT_SECRET
+          value: "super_secret_jwt_key_2024"
+        volumeMounts:
+        - name: host-root
+          mountPath: /host
+      volumes:
+      - name: host-root
+        hostPath:
+          path: /

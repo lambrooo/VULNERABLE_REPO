@@ -1,43 +1,118 @@
+# Insecure OpenAPI Specification for Spectral Testing
+# Contains multiple API security issues
+
 openapi: 3.0.0
 info:
   title: Vulnerable E-Commerce API
   version: 1.0.0
+  # Missing: contact, license, description
 
 servers:
-  - url: http://api.example.com  # BAD: HTTP not HTTPS
+  # ISSUE: Using HTTP instead of HTTPS
+  - url: http://api.example.com/v1
+  - url: http://localhost:3000
+
+# ISSUE: No global security defined
+# security: []
 
 paths:
-  /users/{userId}:
+  /users:
     get:
-      operationId: getUser
-      # Missing: security definition
+      summary: Get all users
+      # ISSUE: No operationId
+      # ISSUE: No security defined for endpoint
+      responses:
+        200:
+          description: List of users
+          # ISSUE: No response schema defined
+        default:
+          description: Error
+          
+  /users/{id}:
+    get:
+      summary: Get user by ID
       parameters:
-        - name: userId
+        - name: id
+          in: path
+          required: true
+          # ISSUE: No schema for parameter
+      responses:
+        200:
+          description: User details
+          
+  /login:
+    post:
+      summary: User login
+      # ISSUE: No request body schema
+      requestBody:
+        content:
+          application/json:
+            # ISSUE: No schema defined
+            example:
+              username: admin
+              password: password123
+      responses:
+        200:
+          description: Login successful
+          content:
+            application/json:
+              # ISSUE: Returns sensitive data pattern
+              example:
+                token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+                user:
+                  password: hashed_password
+                  ssn: 123-45-6789
+
+  /admin/users:
+    delete:
+      summary: Delete all users
+      # ISSUE: No security, dangerous operation exposed
+      responses:
+        204:
+          description: All users deleted
+
+  /files/{filename}:
+    get:
+      summary: Download file
+      parameters:
+        - name: filename
           in: path
           required: true
           schema:
-            type: string  # BAD: Should be integer
+            type: string
+          # ISSUE: Path traversal risk, no validation
       responses:
         200:
-          description: Success
-          # Missing: response schema
-        # Missing: error responses
-        
-  /admin/users:
-    delete:
-      operationId: deleteAllUsers
-      # Missing: security
-      
-  /login:
+          description: File content
+
+  /exec:
     post:
+      summary: Execute command
+      # ISSUE: Dangerous endpoint, no security
       requestBody:
         content:
           application/json:
             schema:
               type: object
               properties:
-                password:
+                command:
                   type: string
-                  example: "password123"  # BAD
+      responses:
+        200:
+          description: Command output
 
-# Missing: securityDefinitions
+# ISSUE: No components/securitySchemes defined
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        # ISSUE: Sensitive field in schema
+        password:
+          type: string
+        credit_card:
+          type: string
